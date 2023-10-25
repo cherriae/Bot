@@ -1,0 +1,8 @@
+discord.py
+python-dotenv
+jishaku
+pillow
+cbvx
+tortoise-orm
+matplotlib
+numpy
