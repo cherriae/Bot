@@ -42,7 +42,7 @@ class CartesianGraph:
         def dynamic_function(x):
             # Execute the function string in the given context
             local_vars = {'x': x}
-            exec("result = " + function, globals(), local_vars)
+            exec(f"result = {function}", globals(), local_vars)
             return local_vars['result']
 
         return dynamic_function
@@ -153,10 +153,8 @@ class EquationSolver:
             for side in sides:
                 terms = side.split('+')
                 for term in terms:
-                    term = term.strip()
-                    if term:
-                        match = re.match(r'([-+]?\d*)[ ]*([a-zA-Z]*)', term)
-                        if match:
+                    if term := term.strip():
+                        if match := re.match(r'([-+]?\d*)[ ]*([a-zA-Z]*)', term):
                             coeff_str, var = match.groups()
                             coeff = int(coeff_str) if coeff_str else 1
                             if var:
@@ -174,11 +172,8 @@ class EquationSolver:
         terms = expression.split('+')
         result = ''
         for term in terms:
-            if '-' in term:
-                term = term.strip()
-            else:
-                term = term.strip('+')
-            result += term + ' * solver.x '
+            term = term.strip() if '-' in term else term.strip('+')
+            result += f'{term} * solver.x '
         return result
 
     @staticmethod
