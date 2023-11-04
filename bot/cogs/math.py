@@ -21,7 +21,7 @@ class MathCog(commands.Cog):
                       description="Returns the value for fibonacci sequences")
     async def _fibonacci(self, ctx, n: int):
         result = fibonacci(n)
-        if len(str(result)) + 10 > 4000:
+        if len(str(result)) > 3990:
             return await ctx.send("Too much can't show all of it here sorry")
         await ctx.send(f"```py\n{result}\n```")
 
