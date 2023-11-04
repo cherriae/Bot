@@ -17,7 +17,8 @@ from aiohttp import ClientSession
 load_dotenv()
 
 __initial_extension__ = [
-    "bot.cogs.ext"
+    "bot.cogs.ext",
+    "bot.cogs.math"
 ]
 
 __utils_extension__ = [

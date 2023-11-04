@@ -6,3 +6,4 @@ cbvx
 tortoise-orm
 matplotlib
 numpy
+sympy

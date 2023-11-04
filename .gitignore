@@ -5,3 +5,5 @@ venv
 .env
 
 qodana.yaml
+
+graph.png

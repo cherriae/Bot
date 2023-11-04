@@ -61,5 +61,20 @@ class ExtraCog(commands.Cog, command_attrs=dict(hidden=False)):
         )
 
 
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        messages = message.content
+        messages = str(messages).replace(' ', '')
+
+        if messages.startswith('user:'):
+            prefix, user = messages.split(':')
+            await message.channel.send(f"https://github.com/{user}")
+
+        if messages.startswith('repo:'):
+            prefix, repo = messages.split(':')
+            await message.channel.send(f"https://github.com/{repo}")
+
+
+
 async def setup(bot: Bot) -> None:
     await bot.add_cog(ExtraCog(bot))
