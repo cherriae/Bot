@@ -9,8 +9,8 @@ import os
 
 from discord.ext import commands
 from dotenv import load_dotenv
-from typing import Optional
 from aiohttp import ClientSession
+from tortoise import Tortoise
 
 # from .utils.help import CustomHelpCommand
 
@@ -18,7 +18,8 @@ load_dotenv()
 
 __initial_extension__ = [
     "bot.cogs.ext",
-    "bot.cogs.math"
+    "bot.cogs.math",
+    "bot.cogs.tags"
 ]
 
 __utils_extension__ = [
@@ -35,12 +36,26 @@ def get_prefix(bot, message):
 class Bot(commands.AutoShardedBot):
     def __init__(self):
         super().__init__(
-            command_prefix=get_prefix,  # type: ignore
-            intents=discord.Intents.all(),
-            allowed_mentions=discord.AllowedMentions(roles=False, everyone=False, users=True),
+            activity=discord.Activity(
+                type=discord.ActivityType.listening, name=">help"
+            ),
+            command_prefix=get_prefix,
+            intents=discord.Intents(
+                members=True,
+                messages=True,
+                message_content=True,
+                guilds=True,
+                bans=True,
+            ),
+            allowed_mentions=discord.AllowedMentions(
+                roles=False, everyone=False, users=True
+            ),
             case_sensitive=True,
             strip_after_prefix=True,
-            # help_command = CustomHelpcommand
+            auto_sync_commands=False,
+            chunk_guilds_at_startup=False,
+            help_command=None,
+            owner_ids=[],
         )
 
         self._launch_time = datetime.datetime.now(datetime.timezone.utc)
@@ -66,6 +81,7 @@ class Bot(commands.AutoShardedBot):
 
     async def on_ready(self):
         await self._load_extensions()
+        await self.tortoise()
 
     async def _load_extensions(self):
         self._extensions = __initial_extension__.copy() + __utils_extension__
@@ -75,6 +91,17 @@ class Bot(commands.AutoShardedBot):
                 await self.load_extension(extensions)  # type: ignore
             except Exception as e:
                 raise e
+            
+    async def tortoise(self):
+        await Tortoise.init(
+            db_url="sqlite://bot/db/tortoise.db",
+            modules={'models': ['bot.db.__init__']}
+        )
+        await Tortoise.generate_schemas()
+
+    async def close(self) -> None:
+        await Tortoise.close_connections()
+        return await super().close()
 
     def run(self):
         super().run(token=os.getenv("TOKEN"), reconnect=True)

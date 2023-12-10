@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import discord
-import re
 from discord.ext import commands
 
 from ..utils import Bot, EquationSolver, CartesianGraph, fibonacci
@@ -23,7 +22,7 @@ class MathCog(commands.Cog):
         result = fibonacci(n)
         if len(str(result)) > 3990:
             return await ctx.send("Too much can't show all of it here sorry")
-        await ctx.send(f"```py\n{result}\n```")
+        return await ctx.send(f"```py\n{result}\n```")
 
     @commands.command(name="graph", aliases=["graphing"],
                       description="Returns a cartesian graph for the inputted graph")
@@ -36,21 +35,25 @@ class MathCog(commands.Cog):
 
         graph.plot(eq)
 
-        await ctx.send(file=discord.File('./bot/ext/images/graph.png'))
+        return await ctx.send(file=discord.File('./bot/ext/images/graph.png'))
 
     @commands.group(name="solve", aliases=['s'], description="Solve an algebraic equation", invoke_without_command=True)
     async def _solve(self, ctx: commands.Context, *, equation: str):
         equation = equation.replace('^', '**')
-        answer = self.solver.solve_polynomial(equation, self.solver.x)
-        await ctx.send(answer)
+        try:
+            answer = self.solver.solve_polynomial(equation=equation, variable_to_solve_for=self.solver.x)
+            await ctx.send(discord.utils.escape_markdown(str(answer)))
+        except Exception:
+            await ctx.send("No algorithms are implemented to solve equation so far.")
 
-    @_solve.command(name="system", aliases=['sys', 'matrix', 'matrices'])
+
+    @_solve.command(name="system", description="Solve system of equations (2 only)", aliases=['sys', 'matrix', 'matrices'])
     async def _system(self, ctx, equation1: str, equation2: str):
         equations = [equation1, equation2]
 
         coefficents, constants = self.solver.equations_to_lists(equations)
         solutions = self.solver.system(coefficents, constants)
-        await ctx.send(f"X: {solutions[0]}\nY: {solutions[1]}")
+        await ctx.send(f"X: {discord.utils.escape_markdown(str(solutions[0]))}\nY: {discord.utils.escape_markdown(str(solutions[1]))}")
 
 
 async def setup(bot: Bot):

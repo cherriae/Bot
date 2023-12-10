@@ -1,9 +1,20 @@
+# Python
 __pycache__
 venv
+
+# Pycharm
 .idea
 
+# Env
 .env
 
+# Qodana.yaml
 qodana.yaml
 
+# Graph
 graph.png
+
+# Database
+bot/db/tortoise.db
+bot/db/tortoise.db-shm
+bot/db/tortoise.db-wal

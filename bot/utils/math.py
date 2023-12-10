@@ -177,7 +177,7 @@ class EquationSolver:
         return result
 
     @staticmethod
-    def solve_polynomial(self, equation, variable_to_solve_for):
+    def solve_polynomial(equation, variable_to_solve_for):
         """Solves a polynomial equation for a specified variable.
 
         Args:

@@ -44,7 +44,7 @@ class ExtraCog(commands.Cog, command_attrs=dict(hidden=False)):
         )
         await ctx.send(embed=embed)
 
-    @commands.command(name="spotify", aliases=["sp"])
+    @commands.command(name="spotify", aliases=["sp"], description="Return the user spotify activity")
     @commands.cooldown(5, 60, type=commands.BucketType.user)
     async def _spotify(self, ctx, member: commands.MemberConverter = None):
         member = ctx.author if member is None else member
@@ -67,11 +67,11 @@ class ExtraCog(commands.Cog, command_attrs=dict(hidden=False)):
         messages = str(messages).replace(' ', '')
 
         if messages.startswith('user:'):
-            prefix, user = messages.split(':')
+            _, user = messages.split(':')
             await message.channel.send(f"https://github.com/{user}")
 
         if messages.startswith('repo:'):
-            prefix, repo = messages.split(':')
+            _, repo = messages.split(':')
             await message.channel.send(f"https://github.com/{repo}")
 
 
