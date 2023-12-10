@@ -11,6 +11,8 @@ from discord.ext import commands
 from dotenv import load_dotenv
 from aiohttp import ClientSession
 from tortoise import Tortoise
+from traceback import format_exception
+
 
 # from .utils.help import CustomHelpCommand
 
@@ -55,7 +57,8 @@ class Bot(commands.AutoShardedBot):
             auto_sync_commands=False,
             chunk_guilds_at_startup=False,
             help_command=None,
-            owner_ids=[],
+            #owner_ids=[YOUR_IDS_HERE],
+            owner_id=os.getenv("OWNER_ID")
         )
 
         self._launch_time = datetime.datetime.now(datetime.timezone.utc)
@@ -88,7 +91,7 @@ class Bot(commands.AutoShardedBot):
 
         for extensions in self._extensions:
             try:
-                await self.load_extension(extensions)  # type: ignore
+                await self.load_extension(extensions)
             except Exception as e:
                 raise e
             
@@ -98,6 +101,25 @@ class Bot(commands.AutoShardedBot):
             modules={'models': ['bot.db.__init__']}
         )
         await Tortoise.generate_schemas()
+
+    async def on_command_error(self, ctx, error):
+        try:
+            error = error.original
+        except Exception:
+            error = error
+
+        if isinstance(error, commands.CommandNotFound):
+            try:
+                return await ctx.send("Command does not exist")
+
+            except Exception:
+                return
+
+        
+        owner = await self.fetch_user(self.owner_id)
+        embed = discord.Embed(title=f"In Command: `{ctx.command.qualified_name}`", description=f"```py\n{''.join(format_exception(type(error), error, error.__traceback__))}```", colour=discord.Color.blurple())
+        await owner.send(embed=embed)
+
 
     async def close(self) -> None:
         await Tortoise.close_connections()
