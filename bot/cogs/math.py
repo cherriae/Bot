@@ -51,8 +51,8 @@ class MathCog(commands.Cog):
     async def _system(self, ctx, equation1: str, equation2: str):
         equations = [equation1, equation2]
 
-        coefficents, constants = self.solver.equations_to_lists(equations)
-        solutions = self.solver.system(coefficents, constants)
+        coefficients, constants = self.solver.equations_to_lists(equations)
+        solutions = self.solver.system(coefficients, constants)
         await ctx.send(f"X: {discord.utils.escape_markdown(str(solutions[0]))}\nY: {discord.utils.escape_markdown(str(solutions[1]))}")
 
 

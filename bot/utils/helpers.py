@@ -73,7 +73,7 @@ class Spotify:
             contains the spotify image
         """
 
-        # Resize imput image to 300x300
+        # Resize input image to 300x300
         d = Image.open(pic).resize((300, 300))
         # Save to a buffer as PNG
         buffer = BytesIO()
