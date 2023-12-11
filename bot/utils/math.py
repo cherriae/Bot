@@ -40,10 +40,10 @@ class CartesianGraph:
             The function used for CartesianGraph.plot
         """
 
-        def dynamic_function(x):
+        def dynamic_function(x): #TODO: Fix this vunerablitiy
             local_vars = {'x': x}
-            exec(compile(ast.parse(function), filename='<string>', mode='exec'), globals(), local_vars)
-            return local_vars['x']
+            exec(f"result = {function}", globals(), local_vars)
+            return local_vars['result']
         return dynamic_function
 
     @property
