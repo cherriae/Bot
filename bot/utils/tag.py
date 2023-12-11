@@ -1,5 +1,6 @@
-from ..db import TagModel
+from ..db.database import TagModel
 from typing import Union
+from discord.utils import format_dt
 
 class Tags:
     """
@@ -116,20 +117,17 @@ class Tags:
         """
         if not (
             tag := await TagModel.get_or_none(
-                name=tag_name, guild_id=self.guild_id
+                tag_name=tag_name, guild_id=self.guild_id
             )
         ):
             return "Tag doesn't exist"
         if tag.author_id != self.author_id:
             return "You don't own this tag"
-        if await TagModel.exists(guild_id=self.guild_id, name=alias):
-            return "Can't add alias"
-        # what if alias name exists
-        if TagModel.get_or_none(name=alias, guild_id=self.guild_id):
-            return "Alias name already exists"
-        await TagModel.create(guild_id=self.guild_id, name=alias, content=tag.content, author_id=self.author_id)
+        if await TagModel.exists(guild_id=self.guild_id, tag_name=alias):
+            return "Can't add alias, name already exists"
+        await TagModel.create(guild_id=self.guild_id, tag_name=alias, tag_content=tag.tag_content, author_id=self.author_id)
         await tag.update_from_dict({'aliases': alias}).save()
-        return f"Added alias to {tag_name}"
+        return f"Added alias to `{tag_name}`, `{alias}`"
 
     async def delete_alias(self, tag_name: str, alias: str) -> str:
         """Deletes an alias from a tag.
@@ -144,10 +142,10 @@ class Tags:
         """
         if tag := await TagModel.get_or_none(tag_name=tag_name, guild_id=self.guild_id):
             if tag.author_id == self.author_id:
-                if TagModel.get_or_none(tag_name=alias, guild_id=self.guild_id):
-                    await TagModel.delete(guild_id=self.guild_id, tag_name=alias)
+                if tag_aliased := await TagModel.get_or_none(tag_name=alias, guild_id=self.guild_id):
+                    await tag_aliased.delete()
                     await tag.update_from_dict({'aliases': None}).save()
-                    return f"Deleted alias from {tag_name}"
+                    return f"Deleted alias from `{tag_name}`"
                 else:
                     return "Alias doesn't exist"
             else:
@@ -189,7 +187,16 @@ class Tags:
         """
         # get all information on the tag with {name}
         if tag := await TagModel.get_or_none(tag_name=name, guild_id=self.guild_id):
-            return tag.to_dict()
+            tags = await TagModel.filter(guild_id=self.guild_id).order_by('-uses')
+
+            return [
+                tag.tag_name,
+                tag.author_id,
+                tag.uses,
+                format_dt(tag.created_at),
+                tag.aliases,
+                next((index + 1 for index, t in enumerate(tags) if t.tag_name == tag.tag_name), None)
+            ]
         else:
             return "Tag doesn't exists"
 
@@ -201,10 +208,15 @@ class Tags:
 
         """
         # list all tags in the guild
-        tags = await TagModel.filter(guild_id=self.guild_id)
+        if tags := await TagModel.filter(guild_id=self.guild_id):
+            return "\n".join(
+                f"{i+1}. `{name}`"
+                for i, name in enumerate(
+                    tag.tag_name for tag in tags
+                )
+            )
         if not tags:
             return "Server doesn't have any tags"
-        return [tag.to_dict() for tag in tags]
 
     async def query(self, query: str) -> Union[list, str]:
         """Queries for tags based on a search query.
@@ -216,9 +228,15 @@ class Tags:
             Union[list, str]: A list of dictionaries representing the matching tags if there are any, otherwise an error message.
 
         """
-        # query for a tag
-        tags = await TagModel.filter(guild_id=self.guild_id, name__icontains=query)
-        return [tag.to_dict() for tag in tags] if tags else "No result"
+        if tags := await TagModel.filter(guild_id=self.guild_id):
+            return "\n".join(
+                f"{i+1}. `{name}`"
+                for i, name in enumerate(
+                    tag.tag_name for tag in tags if query in tag.tag_name
+                )
+            )
+        else:
+            return "This server doesn't have any tags"
 
     async def author(self) -> Union[list, str]:
         """Retrieves all tags owned by the author.
@@ -227,8 +245,15 @@ class Tags:
             Union[list, str]: A list of dictionaries representing the tags if there are any, otherwise an error message.
 
         """
-        tags = await TagModel.filter(guild_id=self.guild_id, author_id=self.author_id)
-        return [tag.to_dict() for tag in tags] if tags else "No tags found"
+        if tags := await TagModel.filter(guild_id=self.guild_id, author_id=self.author_id):
+            return "\n".join(
+                    f"{i+1}. `{name}`"
+                    for i, name in enumerate(
+                        tag.tag_name for tag in tags
+                    )
+                )
+        else:
+            return "Member don't have any tags"
 
     async def claim(self, tag_name, new_author_id) -> str:
         """Claims ownership of a tag.

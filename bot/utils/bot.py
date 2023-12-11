@@ -98,7 +98,7 @@ class Bot(commands.AutoShardedBot):
     async def tortoise(self):
         await Tortoise.init(
             db_url="sqlite://bot/db/tortoise.db",
-            modules={'models': ['bot.db.__init__']}
+            modules={'models': ['bot.db.database']}
         )
         await Tortoise.generate_schemas()
 
