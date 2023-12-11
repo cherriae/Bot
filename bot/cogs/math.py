@@ -26,14 +26,14 @@ class MathCog(commands.Cog):
 
     @commands.command(name="graph", aliases=["graphing"],
                       description="Returns a cartesian graph for the inputted graph")
-    async def _graph(self, ctx, equation: str, x_min: int = -10, x_max: int = 10,
+    async def _graph(self, ctx, equation: str, domain_start: int = -10, domain_end: int = 10, x_min: int = -10, x_max: int = 10,
                      y_min: int = -10, y_max: int = 10, ticks: int = 1):
         graph = CartesianGraph()
         graph.axes(x_min, x_max, y_min, y_max, ticks)
 
         eq = graph.create_function_from_string(equation)
 
-        graph.plot(eq)
+        graph.plot(eq, "graph.png", domain_start, domain_end)
 
         return await ctx.send(file=discord.File('./bot/ext/images/graph.png'))
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+import ast
 import numpy as np
 import sympy as sp
 import matplotlib.pyplot as plt
@@ -40,11 +41,9 @@ class CartesianGraph:
         """
 
         def dynamic_function(x):
-            # Execute the function string in the given context
             local_vars = {'x': x}
-            exec(f"result = {function}", globals(), local_vars)
-            return local_vars['result']
-
+            exec(compile(ast.parse(function), filename='<string>', mode='exec'), globals(), local_vars)
+            return local_vars['x']
         return dynamic_function
 
     @property
@@ -96,7 +95,7 @@ class CartesianGraph:
         self.ax.grid(which='both', color='blue', linewidth=1, linestyle='-', alpha=0.2)
 
     @staticmethod
-    def plot(y: Callable, filename: Optional[str] = "graph.png"):
+    def plot(y: Callable, filename: Optional[str] = "graph.png", domain_start: int = -10, domain_end: int = 10):
         """Plots a function and saves the plot to a file.
 
         Args:
@@ -108,7 +107,7 @@ class CartesianGraph:
 
         """
 
-        x = np.linspace(-5, 10, 100)
+        x = np.linspace(domain_start, domain_end, 100)
         plt.plot(x, y(x), 'b', linewidth=2)
         try:
             plt.savefig(f"./bot/ext/images/{filename}")
