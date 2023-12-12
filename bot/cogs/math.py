@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import discord
 from discord.ext import commands
+from typing import Union
 
 from ..utils import Bot, EquationSolver, CartesianGraph, fibonacci
 
@@ -26,10 +27,10 @@ class MathCog(commands.Cog):
 
     @commands.command(name="graph", aliases=["graphing"],
                       description="Returns a cartesian graph for the inputted graph")
-    async def _graph(self, ctx, equation: str, domain_start: int = -10, domain_end: int = 10, x_min: int = -10, x_max: int = 10,
-                     y_min: int = -10, y_max: int = 10, ticks: int = 1):
+    async def _graph(self, ctx, equation: str, domain_start: Union[int, float] = -10, domain_end: Union[int, float] = 10, x_min: Union[int, float] = -10, x_max: Union[int, float] = 10,
+                     y_min: Union[int, float] = -10, y_max: Union[int, float] = 10):
         graph = CartesianGraph()
-        graph.axes(x_min, x_max, y_min, y_max, ticks)
+        graph.axes(x_min, x_max, y_min, y_max)
 
         eq = graph.create_function_from_string(equation)
 

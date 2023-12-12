@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 import re
-import ast
 import numpy as np
 import sympy as sp
 import matplotlib.pyplot as plt
 
-from typing import Optional, Callable
+from typing import Optional, Callable, Union
 
 
 class CartesianGraph:
@@ -21,7 +20,6 @@ class CartesianGraph:
     Y_MIN = -5
     Y_MAX = 5
 
-    TICKS = 1
 
     def __init__(self):
         self._fig, self._ax = plt.subplots(figsize=(10, 10))
@@ -54,9 +52,8 @@ class CartesianGraph:
     def ax(self):
         return self._ax
 
-    def axes(self, x_min: Optional[int] = X_MIN, x_max: Optional[int] = X_MAX, y_min: Optional[int] = Y_MIN,
-             y_max: Optional[int] = Y_MAX,
-             ticks: Optional[int] = TICKS):
+    def axes(self, x_min: Optional[Union[int, float]] = X_MIN, x_max: Optional[Union[int, float]] = X_MAX,
+         y_min: Optional[Union[int, float]] = Y_MIN, y_max: Optional[Union[int, float]] = Y_MAX):
         """Configures the plot axes.
 
         Sets the x and y axis limits, removes spines, adds gridlines,
@@ -65,14 +62,14 @@ class CartesianGraph:
         Default values are used for any parameters not provided.
 
         Args:
-           x_min: Optional minimum x value.
-           x_max: Optional maximum x value.
-           y_min: Optional minimum y value.
-           y_max: Optional maximum y value.
-           ticks: Optional tick interval.
+            x_min: Optional minimum x value.
+            x_max: Optional maximum x value.
+            y_min: Optional minimum y value.
+            y_max: Optional maximum y value.
+            ticks: Optional tick interval.
 
         Returns:
-           None. Modifies the axes of the plot in place.
+            None. Modifies the axes of the plot in place.
         """
 
         self.ax.set(xlim=(x_min - 1, x_max + 1), ylim=(y_min - 1, y_max + 1), aspect='equal')
@@ -85,17 +82,23 @@ class CartesianGraph:
         self.ax.set_xlabel('$x$', size=14, labelpad=-24, x=1.02)
         self.ax.set_ylabel('$y$', size=14, labelpad=-21, y=1.02, rotation=0)
 
-        x_ticks = np.arange(x_min, x_max + 1, ticks)
-        y_ticks = np.arange(y_min, y_max + 1, ticks)
-        self.ax.set_xticks(x_ticks[x_ticks != 0])
-        self.ax.set_yticks(y_ticks[y_ticks != 0])
+        # Calculate reasonable tick intervals
+        x_range = x_max - x_min
+        y_range = y_max - y_min
+
+        x_ticks = np.arange(x_min, x_max + 1, max(1, int(x_range / 10)))
+        y_ticks = np.arange(y_min, y_max + 1, max(1, int(y_range / 10)))
+
+        self.ax.set_xticks(x_ticks)
+        self.ax.set_yticks(y_ticks)
         self.ax.set_xticks(np.arange(x_min, x_max + 1), minor=True)
         self.ax.set_yticks(np.arange(y_min, y_max + 1), minor=True)
 
         self.ax.grid(which='both', color='blue', linewidth=1, linestyle='-', alpha=0.2)
 
+
     @staticmethod
-    def plot(y: Callable, filename: Optional[str] = "graph.png", domain_start: int = -10, domain_end: int = 10):
+    def plot(y: Callable, filename: Optional[str] = "graph.png", domain_start: Optional[Union[int, float]] = -10, domain_end: Optional[Union[int, float]] = 10):
         """Plots a function and saves the plot to a file.
 
         Args:
