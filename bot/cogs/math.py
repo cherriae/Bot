@@ -4,7 +4,7 @@ import discord
 from discord.ext import commands
 from typing import Union
 
-from ..utils import Bot, EquationSolver, CartesianGraph, fibonacci
+from ..utils import Bot, EquationSolver, CartesianGraph, fibonacci, latex_to_png
 
 
 class MathCog(commands.Cog):
@@ -56,6 +56,11 @@ class MathCog(commands.Cog):
         solutions = self.solver.system(coefficients, constants)
         await ctx.send(f"X: {discord.utils.escape_markdown(str(solutions[0]))}\nY: {discord.utils.escape_markdown(str(solutions[1]))}")
 
+    @commands.command(name="latex", aliases=['tex', 'math'], description="Returns a latex image for the inputted latex")
+    async def _latex(self, ctx, *, latex: str):
+        await ctx.send(file=discord.File(latex_to_png(latex)))
+
+        
 
 async def setup(bot: Bot):
     await bot.add_cog(MathCog(bot))

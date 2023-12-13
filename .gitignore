@@ -13,8 +13,12 @@ qodana.yaml
 
 # Graph
 graph.png
+latex.png
 
 # Database
 bot/db/tortoise.db
 bot/db/tortoise.db-shm
 bot/db/tortoise.db-wal
+
+# Testing
+test.py

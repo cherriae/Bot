@@ -220,3 +220,14 @@ def fibonacci(n: int):
     return fib_sequence
 
 
+
+def latex_to_png(latex_str: str) -> str:
+    fig = plt.figure()
+
+    plt.axis("off")
+    plt.text(0.5, 0.5, f"${latex_str}$", size=35, ha="center", va="center")
+
+    plt.savefig("./bot/ext/images/latex.png", bbox_inches="tight", pad_inches=0)
+    plt.close(fig)
+
+    return "./bot/ext/images/latex.png"
