@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from ..db.database import TagModel
 from typing import Union
 from discord.utils import format_dt
