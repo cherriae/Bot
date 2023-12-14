@@ -125,7 +125,7 @@ class ExtraCog(commands.Cog, command_attrs=dict(hidden=False)):
 
         embed = discord.Embed(
             title=f"Code Execution: {lang} {version}",
-            description=f"I ran your code! \n\n**Ouput**:\n```{lang}\n{output}```",
+            description=f"I ran your code! \n\n**Output**:\n```{lang}\n{output}```",
             color=discord.Color.blurple()
         )
         embed.add_field(name="stdout", value=f"```{lang}\n{stdout}```", inline=True)
@@ -155,7 +155,7 @@ class ExtraCog(commands.Cog, command_attrs=dict(hidden=False)):
 
         embed = discord.Embed(
             title=f"Code Execution: {lang} {version}",
-            description=f"I ran your code! \n\n**Ouput**:\n```{lang}\n{output}```",
+            description=f"I ran your code! \n\n**Output**:\n```{lang}\n{output}```",
             color=discord.Color.blurple()
         )
         embed.add_field(name="stdout", value=f"```{lang}\n{stdout}```", inline=True)
