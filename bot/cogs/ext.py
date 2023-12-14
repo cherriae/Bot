@@ -108,7 +108,7 @@ class ExtraCog(commands.Cog, command_attrs=dict(hidden=False)):
                 self.lang_versions[alias] = i['version']
     
 
-    @commands.command(name="runl", aliases=["p"], description="Run code single line")
+    @commands.command(name="runl", aliases=["runline", "execl"], description="Run code single line")
     async def runl(self, ctx, language: str, *, codel: str):
         await self.get_runtimes()
 
@@ -124,8 +124,8 @@ class ExtraCog(commands.Cog, command_attrs=dict(hidden=False)):
         version = data["version"]
 
         embed = discord.Embed(
-            title=f"{lang} {version}",
-            description=f"```{lang}\n{output}```",
+            title=f"Code Execution: {lang} {version}",
+            description=f"I ran your code! \n\n**Ouput**:\n```{lang}\n{output}```",
             color=discord.Color.blurple()
         )
         embed.add_field(name="stdout", value=f"```{lang}\n{stdout}```", inline=True)
@@ -134,7 +134,7 @@ class ExtraCog(commands.Cog, command_attrs=dict(hidden=False)):
 
         await ctx.send(embed=embed)
 
-    @commands.command(name="run", aliases=["r"], description="Run code")
+    @commands.command(name="run", aliases=["r", "exec"], description="Run code")
     async def _run(self, ctx, *, code: str):
         matches = self.regex.findall(code)
         lang = lang = matches[0][0] or matches[0][1]
@@ -154,8 +154,8 @@ class ExtraCog(commands.Cog, command_attrs=dict(hidden=False)):
         version = data["version"]
 
         embed = discord.Embed(
-            title=f"{lang} {version}",
-            description=f"I ran your code! \n\n```{lang}\n{output}```",
+            title=f"Code Execution: {lang} {version}",
+            description=f"I ran your code! \n\n**Ouput**:\n```{lang}\n{output}```",
             color=discord.Color.blurple()
         )
         embed.add_field(name="stdout", value=f"```{lang}\n{stdout}```", inline=True)
