@@ -21,7 +21,8 @@ load_dotenv()
 __initial_extension__ = [
     "bot.cogs.ext",
     "bot.cogs.math",
-    "bot.cogs.tags"
+    "bot.cogs.tags",
+    "bot.cogs.leveling"
 ]
 
 __utils_extension__ = [
@@ -57,8 +58,8 @@ class Bot(commands.AutoShardedBot):
             auto_sync_commands=False,
             chunk_guilds_at_startup=False,
             help_command=None,
-            #owner_ids=[YOUR_IDS_HERE],
-            owner_id=os.getenv("OWNER_ID")
+            #owner_ids=[YOUR_IDS_HERE], #integers only
+            owner_id=int(os.getenv("OWNER_ID"))
         )
 
         self._launch_time = datetime.datetime.now(datetime.timezone.utc)
@@ -83,8 +84,7 @@ class Bot(commands.AutoShardedBot):
         return ClientSession()
 
     async def on_ready(self):
-        await self._load_extensions()
-        await self.tortoise()
+        print("Bot is ready")
 
     async def _load_extensions(self):
         self._extensions = __initial_extension__.copy() + __utils_extension__
@@ -101,6 +101,11 @@ class Bot(commands.AutoShardedBot):
             modules={'models': ['bot.db.database']}
         )
         await Tortoise.generate_schemas()
+
+    async def start(self, token: str, *, reconnect: bool = True) -> None:
+        await self.tortoise()
+        await self._load_extensions()
+        return await super().start(token, reconnect=reconnect)
 
     async def on_command_error(self, ctx, error):
         try:
@@ -126,4 +131,4 @@ class Bot(commands.AutoShardedBot):
         return await super().close()
 
     def run(self):
-        super().run(token=os.getenv("TOKEN"), reconnect=True)
+        super().run(token=os.getenv("TOKEN"))

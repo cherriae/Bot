@@ -22,3 +22,6 @@ bot/db/tortoise.db-wal
 
 # Testing
 test.py
+
+# Visual Studio Code
+.vscode
