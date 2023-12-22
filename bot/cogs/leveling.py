@@ -69,12 +69,5 @@ class Level(commands.Cog):
         await Leveling(guild_id=member.guild.id, author_id=member.id).create_user()
         await RankCardSetting(guild_id=member.guild.id, user_id=member.id).create_card()
 
-    @commands.command(name="optin")
-    async def _optin(self, ctx):
-        e = await Leveling(guild_id=ctx.guild.id, author_id=ctx.author.id).create_user()
-        f = await RankCardSetting(guild_id=ctx.guild.id, user_id=ctx.author.id).create_card()
-        await ctx.send(e)
-        await ctx.send(f)
-
 async def setup(bot):
     await bot.add_cog(Level(bot))

@@ -5,7 +5,7 @@ import io
 import discord
 
 from PIL import Image, ImageDraw, ImageFont
-from typing import Union, Optional
+from typing import Union
 from ..db.database import LevelingSystem, LevelingSystemCard
 from datetime import datetime
 
