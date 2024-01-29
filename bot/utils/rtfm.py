@@ -72,7 +72,7 @@ class WpilibRFTM:
 
     def build(self, classes: Optional[str] = None, subclass: Optional[str] = None, term: Optional[str] = None) -> str:
         if classes is None:
-            return f"{self.API_REFERENCE}/allwpilib/docs/release/java/index.html"
+            return "https://github.wpilib.org/allwpilib/docs/release/java/"
 
         base_url = f"{self.API_REFERENCE}/{classes.lower()}"
 
