@@ -178,12 +178,12 @@ class Spotify:
         url = activity.track_url
         image = await self.get_from_local(self.bot, activity)
         view = discord.ui.View()
-        view.add_item(
+        view.add_item(  
             discord.ui.Button(
                 url=url,
                 style=discord.ButtonStyle.green,
                 label="\u2007Open in Spotify",
-                emoji="<:spotify:983984483755765790>",
+                emoji="<:spotify:1201622296973025430>",
             )
         )
         return image, view

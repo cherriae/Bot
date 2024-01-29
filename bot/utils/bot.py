@@ -22,7 +22,8 @@ __initial_extension__ = [
     "bot.cogs.ext",
     "bot.cogs.math",
     "bot.cogs.tags",
-    "bot.cogs.leveling"
+    "bot.cogs.leveling",
+    "bot.cogs.rtfm"
 ]
 
 __utils_extension__ = [
